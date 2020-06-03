@@ -24,6 +24,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '分类'
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     """
@@ -45,10 +48,13 @@ class Tag(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '标签'
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     """
-    博客
+    文章
     """
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
@@ -72,3 +78,32 @@ class Post(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '文章'
         ordering = ['-id']  # 根据id进行降序排列
+
+    @staticmethod
+    def get_by_tag(tag_id):
+        try:
+            tag = Tag.objects.get(id=tag_id)
+        except Tag.DoesNotExist:
+            tag = None
+            post_list = []
+        else:
+            post_list = tag.post_set.filter(status=Post.STATUS_NORMAL) \
+                .select_related('owner', 'category')
+        return tag, post_list
+
+    @staticmethod
+    def get_by_category(category_id):
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            category = None
+            post_list = []
+        else:
+            post_list = category.post_set.filter(status=Post.STATUS_NORMAL) \
+                .select_related('owner', 'category')
+        return category, post_list
+
+    @classmethod
+    def latest_posts(cls):
+        queryset = cls.objects.filter(status=cls.STATUS_NORMAL).select_related('owner').order_by('created_time')
+        return queryset
