@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} 首页 {% endblock %} - fly_博客系统</title>
+</head>
+<body>
+    <div>顶部分类:
+        {% for category in navs %}
+            <a href="{% url 'category_list' category.id %}">{{ category.name }}</a>
+        {% endfor %}
+
+    </div>
+    <br/>
+    {% block main %}
+    {% endblock %}
+    <br/>
+    <div>底部分类:
+        {% for category in categories %}
+            <a href="{% url 'category_list' category.id %}">{{ category.name }}</a>
+        {% endfor %}
+    </div>
+    <br/>
+    <div>侧边栏展示:
+        {% for sidebar in sidebars %}
+            <h4>
+                {{ sidebar.title }}
+                {{ sidebar.content_html }}
+            </h4>
+        {% endfor %}
+    </div>
+</body>
+</html>

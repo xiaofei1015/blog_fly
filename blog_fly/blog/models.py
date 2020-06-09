@@ -1,6 +1,7 @@
 # Author: xiaofei
 from django.db import models
 from django.contrib.auth.models import User
+import mistune
 
 
 class Category(models.Model):
@@ -27,6 +28,26 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_navs(cls):
+        """
+        得到导航的分类数据
+        :return:
+        """
+        categories = cls.objects.filter(status=cls.STATUS_NORMAL)
+        nav_categories = []
+        normal_categories = []
+        #  数据量小的情况，可以避免两次IO查询，一次查出normal_category, 一次查出nav_categories
+        #  数据量大， 就应该使用两次IO查询
+        for category in categories:
+            if category.is_nav:
+                nav_categories.append(category)
+            else:
+                normal_categories.append(category)
+        return {
+            'navs': nav_categories,
+            'categories': normal_categories
+        }
 
 class Tag(models.Model):
     """
@@ -68,16 +89,22 @@ class Post(models.Model):
     title = models.CharField(max_length=256, verbose_name='标题')
     desc = models.CharField(max_length=1024, blank=True, verbose_name='摘要')
     content = models.TextField(verbose_name='正文', help_text='正文必须为MarkDown格式')
+    content_html = models.TextField(verbose_name='正文html代码', blank=True, editable=False)
     status = models.PositiveIntegerField(default=STATUS_NORMAL,
         choices=STATUS_ITEMS, verbose_name='状态')
     category = models.ForeignKey(Category, verbose_name='分类')
     tag = models.ManyToManyField(Tag, verbose_name='标签')
     owner = models.ForeignKey(User,verbose_name='作者')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    pv = models.PositiveIntegerField(default=1)
+    uv = models.PositiveIntegerField(default=1)
 
     class Meta:
         verbose_name = verbose_name_plural = '文章'
         ordering = ['-id']  # 根据id进行降序排列
+
+    def __str__(self):
+        return self.title
 
     @staticmethod
     def get_by_tag(tag_id):
@@ -107,3 +134,16 @@ class Post(models.Model):
     def latest_posts(cls):
         queryset = cls.objects.filter(status=cls.STATUS_NORMAL).select_related('owner').order_by('created_time')
         return queryset
+
+    @classmethod
+    def hot_posts(cls):
+        return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+
+    def save(self, *args, **kwargs):
+        self.content_html = mistune.markdown(self.content)
+        super().save(*kwargs, **kwargs)
+
+    from django.utils.functional import cached_property
+    @cached_property
+    def tags(self):
+        return ','.join(self.tag.values_list('name', flat=True))

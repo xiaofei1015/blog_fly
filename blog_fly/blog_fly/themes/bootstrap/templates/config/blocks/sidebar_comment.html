@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>博客系统</title>
+</head>
+<body>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                {% autoescape off %}
+                <a href="{{ comment.target }}">{{ comment.target.title }}</a> |
+                {{ comment.nickname }}: {{ comment.content }}
+                {% endautoescape %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
