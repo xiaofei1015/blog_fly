@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'comment',
     'xadmin',
     'crispy_forms',
+    'ckeditor',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -139,3 +140,19 @@ STATICFILES_DIRS = [
 
 XADMIN_TITLE = 'fly 管理后台'
 XADMIN_FOOTER_TITLE = 'power by fly'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 800,
+        'tabSpaces': 4,
+        'extraPlugins': 'codesnippet' # 配置代码插件
+    },
+}
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CKEDITOR_UPLOAD_PATH = 'article_images'
+
+

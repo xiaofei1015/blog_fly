@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 import xadmin
-from django.conf.urls import url
+from django.conf.urls import url, include
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
+from django.conf import settings
 
-from .custom_site import custom_site
 from blog.views import (
     PostDetailView, CategoryView, TagView, IndexView,
     SearchView, AuthorView
@@ -41,5 +42,5 @@ urlpatterns = [
     url(r'^comment/$', CommentView.as_view(), name="comment"),
     url(r'^rss|feed/', LatestPostFeed(), name='rss'),
     url(r'^sitemap\.xml$', sitemap_views.sitemap, {'sitemaps': {'posts': PostSiteMap}}),
-
-]
+    url(r'^ckeditor/', include('ckeditor_uploader.urls'))
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
