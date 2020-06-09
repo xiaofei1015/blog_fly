@@ -1,3 +1,5 @@
 -i http://pypi.doubian.com/simple/
 Django~=1.11
+xadmin~=0.6.1
+pyMySQL~=0.9.3
 -e .
