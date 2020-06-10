@@ -36,7 +36,6 @@ def post_list(request, category_id=None, tag_id=None):
         'sidebars': SideBar.get_all()
     }
     context.update(Category.get_navs())
-    print(context)
     return render(request, 'blog/list.html', context=context)
 
 
@@ -90,6 +89,7 @@ class IndexView(CommonViewMixin, ListView):
     paginate_by = 5
     context_object_name = 'post_list'
     template_name = 'blog/list.html'
+    print('hello')
 
 
 class CategoryView(IndexView):
@@ -109,6 +109,7 @@ class CategoryView(IndexView):
         """
         queryset = super().get_queryset()
         category_id = self.kwargs.get('category_id')
+        print(queryset, 'query')
         return queryset.filter(category_id=category_id)
 
 
@@ -137,7 +138,6 @@ class SearchView(IndexView):
     首页搜索, 通过title和desc进行搜索
     """
     def get_context_data(self):
-        print(self.request.GET)
         context = super().get_context_data()
         context.update({
             'keyword': self.request.GET.get('keyword', '')

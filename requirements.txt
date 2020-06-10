@@ -3,4 +3,8 @@ Django~=1.11
 xadmin~=0.6.1
 pyMySQL~=0.9.3
 pillow~=5.1.0
+djangorestframework~=3.8.2
+django-debug-toolbar~=1.9.1
+djdt_flamegraph~=0.2.12
+django-redis~=4.9.0
 -e .

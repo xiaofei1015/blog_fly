@@ -54,6 +54,8 @@ class SideBar(models.Model):
 
     @classmethod
     def get_all(cls):
+        import time
+        time.sleep(3)
         return cls.objects.filter(status=cls.STATUS_SHOW)
 
     @property
@@ -70,20 +72,17 @@ class SideBar(models.Model):
             result = self.content
         elif self.display_type == self.DISPLAY_LATEST:
             context = {
-                'posts': Post.latest_posts()
+                'posts': Post.latest_posts(with_related=False)
             }
             result = render_to_string('config/blocks/sidebar_post.html', context)
-            print(context)
         elif self.display_type == self.DISPLAY_HOT:
             context = {
                 'posts': Post.hot_posts()
             }
             result = render_to_string('config/blocks/sidebar_post.html', context)
         elif self.display_type == self.DISPLAY_LATEST_COMMENT:
-            print('123')
             context = {
                 'comments': Comment.objects.filter(status=Comment.STATUS_NORMAL)
             }
-            print(context)
             result = render_to_string('config/blocks/sidebar_comment.html', context)
         return result

@@ -1,7 +1,8 @@
 from .base import *
 
+DEBUG = False
+ALLOWED_HOSTS = ['the_fly.com']
 
-DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -12,15 +13,6 @@ DATABASES = {
         'PORT': 3306,
     }
 }
-
-INSTALLED_APPS += [
-    'debug_toolbar',
-]
-
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-]
-INTERNAL_IPS = ['127.0.0.1']
 
 REDIS_URL = 'redis://127.0.0.1:6379/1'
 CACHES = {

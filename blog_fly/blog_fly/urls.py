@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
 
 from blog.views import (
     PostDetailView, CategoryView, TagView, IndexView,
@@ -28,6 +29,11 @@ from config.views import LinkListView
 from comment.views import CommentView
 from blog.rss import LatestPostFeed
 from blog.sitemap import PostSiteMap
+from blog.apis import PostViewSet, CategoryViewSet
+
+router = DefaultRouter()
+router.register(r'post', PostViewSet, base_name='api_post')
+router.register(r'category', CategoryViewSet, base_name='api_category')
 
 urlpatterns = [
     url(r'^super_admin/', admin.site.urls, name='super_admin'),
@@ -42,5 +48,12 @@ urlpatterns = [
     url(r'^comment/$', CommentView.as_view(), name="comment"),
     url(r'^rss|feed/', LatestPostFeed(), name='rss'),
     url(r'^sitemap\.xml$', sitemap_views.sitemap, {'sitemaps': {'posts': PostSiteMap}}),
-    url(r'^ckeditor/', include('ckeditor_uploader.urls'))
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    url(r'^api/', include(router.urls, namespace='api'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns =[
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import mistune
+from django.core.cache import cache
 
 
 class Category(models.Model):
@@ -131,13 +132,20 @@ class Post(models.Model):
         return category, post_list
 
     @classmethod
-    def latest_posts(cls):
-        queryset = cls.objects.filter(status=cls.STATUS_NORMAL).select_related('owner').order_by('created_time')
+    def latest_posts(cls, with_related=True):
+        queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
+        if with_related:
+            queryset = queryset.select_related('owner', 'category').prefetch_related('tag').order_by('created_time')
         return queryset
 
     @classmethod
     def hot_posts(cls):
-        return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+        # result = cache.get('host_posts')
+        # if not result:
+        #     result = cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+        #     cache.set('host_posts', result, 10 * 60)
+        result = cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+        return result
 
     def save(self, *args, **kwargs):
         self.content_html = mistune.markdown(self.content)

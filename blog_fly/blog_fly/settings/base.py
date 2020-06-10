@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'xadmin',
     'crispy_forms',
     'ckeditor',
+    'rest_framework',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -155,4 +156,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = 'article_images'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 2
+}
 
