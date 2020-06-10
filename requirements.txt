@@ -7,4 +7,5 @@ djangorestframework~=3.8.2
 django-debug-toolbar~=1.9.1
 djdt_flamegraph~=0.2.12
 django-redis~=4.9.0
--e .
+redis~=2.10.6
+-e .==

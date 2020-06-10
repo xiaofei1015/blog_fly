@@ -140,11 +140,10 @@ class Post(models.Model):
 
     @classmethod
     def hot_posts(cls):
-        # result = cache.get('host_posts')
-        # if not result:
-        #     result = cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
-        #     cache.set('host_posts', result, 10 * 60)
-        result = cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+        result = cache.get('host_posts')
+        if not result:
+            result = cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
+            cache.set('host_posts', result, 10 * 60)
         return result
 
     def save(self, *args, **kwargs):
